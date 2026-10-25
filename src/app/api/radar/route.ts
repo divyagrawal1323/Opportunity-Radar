@@ -262,7 +262,7 @@ export async function POST(req: NextRequest) {
         const urlsToFetchSet = new Set<string>();
         listingUrls.forEach((u) => urlsToFetchSet.add(u));
         triaged.forEach((t) => urlsToFetchSet.add(t.url));
-        const allUrlsToFetch = Array.from(urlsToFetchSet);
+        const allUrlsToFetch = Array.from(urlsToFetchSet).slice(0, 8);
 
         console.log(`[Step 4 Fetch] Fetching ${allUrlsToFetch.length} total URLs with TinyFish Fetch...`);
 
@@ -350,6 +350,15 @@ export async function POST(req: NextRequest) {
           );
           console.log(`[Step 5 Snippets] Extracted ${snippetItems.length} opportunities from search results`);
           rawExtractedItems.push(...snippetItems);
+          if (snippetItems.length > 0) {
+            const { validItems: initialItems } = validateAndRankOpportunities(snippetItems, todayIso);
+            if (initialItems.length > 0) {
+              sendEvent({
+                type: 'opportunities',
+                items: initialItems,
+              });
+            }
+          }
         } catch (snipErr) {
           console.warn('[Step 5 Snippets Warning]:', snipErr);
         }

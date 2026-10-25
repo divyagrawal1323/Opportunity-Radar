@@ -229,7 +229,7 @@ export async function tinyfishFetch(
             Accept: 'application/json',
           },
           body: JSON.stringify({ urls: batch }),
-          signal: AbortSignal.timeout(150000), // 150s timeout
+          signal: AbortSignal.timeout(25000), // 25s timeout
         });
       } catch (err: unknown) {
         console.error('[TinyFish Fetch] Network/Timeout error on batch:', batch, err);
